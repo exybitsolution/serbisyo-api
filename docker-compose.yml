@@ -1,0 +1,42 @@
+services:
+  app:
+    container_name: serbisyo_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '4000:4000'
+    restart: unless-stopped
+    networks:
+      - serbisyo-network
+    depends_on:
+      - postgres
+    environment:
+      DB_CONNECTION: postgresql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: serbisyoapi_db
+      DB_USERNAME: serbisyodev
+      DB_PASSWORD: serbisyodev
+
+  postgres:
+    container_name: serbisyo_postgres
+    image: postgres:15
+    ports:
+      - '5432:5432'
+    restart: unless-stopped
+    networks:
+      - serbisyo-network
+    environment:
+      POSTGRES_DB: serbisyoapi_db
+      POSTGRES_USER: serbisyodev
+      POSTGRES_PASSWORD: serbisyodev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+
+networks:
+  serbisyo-network:
+    driver: bridge
